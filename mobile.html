@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Tracker Bodypaint BYD</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    
+    <!-- Firebase SDK (v11) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, onSnapshot, orderBy, limit } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7efhwFGSiNQWXvwqKgeNJP1g4Mx7D4aQ",
+            authDomain: "trackingunit-byd.firebaseapp.com",
+            projectId: "trackingunit-byd",
+            storageBucket: "trackingunit-byd.firebasestorage.app",
+            messagingSenderId: "554061694215",
+            appId: "1:554061694215:web:869bfdd502fd5777fef1a2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.fbDB = db;
+        window.fbCollection = collection;
+        window.fbAddDoc = addDoc;
+        window.fbGetDocs = getDocs;
+        window.fbUpdateDoc = updateDoc;
+        window.fbDeleteDoc = deleteDoc;
+        window.fbDoc = doc;
+        window.fbQuery = query;
+        window.fbWhere = where;
+        window.fbOrderBy = orderBy;
+        window.fbLimit = limit;
+        window.fbOnSnapshot = onSnapshot;
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        body.noscroll {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        @media (min-width: 640px) {
+            body {
+                background-color: #f1f5f9;
+                display: flex;
+                justify-content: center;
+                min-height: 100vh;
+            }
+
+            .dark body {
+                background-color: #020617;
+            }
+
+            #app-frame {
+                width: 100%;
+                max-width: 500px;
+                background-color: #ffffff;
+                min-height: 100vh;
+                position: relative;
+                box-shadow: 0 0 50px rgba(0, 0, 0, 0.05);
+                border-left: 1px solid #e2e8f0;
+                border-right: 1px solid #e2e8f0;
+            }
+
+            .dark #app-frame {
+                background-color: #0f172a;
+                border-color: #1e293b;
+            }
+
+            .fixed-w-limit {
+                max-width: 500px;
+                left: 50% !important;
+                transform: translateX(-50%);
+            }
+        }
+
+        main {
+            padding-bottom: 100px;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* NAVBAR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            height: 80px;
+            border-top: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px 15px 10px;
+            z-index: 100;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.04);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            height: 100%;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            min-width: 0;
+        }
+
+        .dark .bottom-nav {
+            background-color: rgba(15, 23, 42, 0.95);
+            border-color: #1e293b;
+        }
+
+
+
+        .nav-item.active {
+            color: #4f46e5;
+        }
+
+        .dark .nav-item.active {
+            color: #818cf8;
+        }
+
+        .nav-item i {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+            font-weight: 800;
+            margin-top: 4px;
+            letter-spacing: -0.01em;
+        }
+
+        .fab-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            z-index: 101;
+            margin-top: -30px;
+            pointer-events: none;
+        }
+
+        .fab-btn {
+            pointer-events: auto;
+            width: 56px;
+            height: 56px;
+            background: #4f46e5;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 8px 20px -5px rgba(79, 70, 229, 0.4);
+            border: 4px solid #ffffff;
+        }
+
+        .dark .fab-btn {
+            border-color: #0f172a;
+        }
+
+        .fab-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* TIMELINE */
+        .timeline-item {
+            position: relative;
+            padding-left: 48px;
+            padding-bottom: 32px;
+            cursor: pointer;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            bottom: 0;
+            width: 2px;
+            background: #e2e8f0;
+            z-index: 0;
+        }
+
+        .dark .timeline-line {
+            background: #334155;
+        }
+
+        .timeline-item:last-child .timeline-line {
+            display: none;
+        }
+
+        .t-icon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 2px solid #e2e8f0;
+            z-index: 1;
+            transition: 0.2s;
+        }
+
+        .dark .t-icon {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        .t-icon.done {
+            background: #4f46e5;
+            border-color: #4f46e5;
+            color: white;
+        }
+
+        .t-icon.active {
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+        }
+
+        .dark .t-icon.active {
+            background: #0f172a;
+        }
+
+        .t-icon svg {
+            width: 16px;
+            height: 16px;
+            display: block;
+        }
+
+        /* INPUTS */
+        .input-box {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            outline: none;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+        }
+
+        .input-box:focus {
+            background: white;
+            border-color: #6366f1;
+        }
+
+        .dark .input-box {
+            background: #1e293b;
+            border-color: #334155;
+            color: white;
+        }
+
+        /* MODALS */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.25s;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .zoom-modal {
+            transform: scale(0.9);
+            opacity: 0;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .overlay.open .zoom-modal {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            width: 100%;
+            background: white;
+            border-radius: 32px 32px 0 0;
+            transform: translateY(100%);
+            transition: 0.3s cubic-bezier(0.3, 1, 0.4, 1);
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dark .bottom-sheet {
+            background: #0f172a;
+        }
+
+        .overlay.open .bottom-sheet {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin: 16px auto;
+        }
+
+        #toast {
+            position: fixed;
+            top: 24px;
+            right: 0px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 20px 0 0 20px;
+            font-size: 14px;
+            font-weight: 800;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(100%);
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.15);
+            border-left: 3px solid #6366f1;
+        }
+
+        #toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        /* --- SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            background: #4f46e5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            color: white;
+        }
+
+        .splash-icon-box {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulseIcon 1.5s infinite alternate;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .splash-title {
+            margin-top: 24px;
+            font-size: 24px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .splash-subtitle {
+            margin-top: 8px;
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 500;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        @keyframes pulseIcon {
+            from {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+            }
+
+            to {
+                transform: scale(1.1);
+                box-shadow: 0 0 0 20px rgba(255, 255, 255, 0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+    <!-- SPLASH SCREEN ANIMATION (Only shown once per session) -->
+    <div id="splash-screen">
+        <div class="splash-icon-box">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 13.1V16c0 .6.4 1 1 1h2"></path>
+                <circle cx="7" cy="17" r="2"></circle>
+                <path d="M9 17h6"></path>
+                <circle cx="17" cy="17" r="2"></circle>
+            </svg>
+        </div>
+        <h1 class="splash-title">Tracking Unit</h1>
+        <p class="splash-subtitle">Monitoring & Progres Harian</p>
+    </div>
+    <script>
+        if (sessionStorage.getItem('splash_shown')) {
+            const splash = document.getElementById('splash-screen');
+            if (splash) splash.remove();
+        } else {
+            sessionStorage.setItem('splash_shown', 'true');
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    const splash = document.getElementById('splash-screen');
+                    if (splash) {
+                        splash.style.opacity = '0';
+                        splash.style.visibility = 'hidden';
+                        setTimeout(() => splash.remove(), 500);
+                    }
+                }, 2000); // 2 second animation duration
+            });
+        }
+    </script>
+
+    <div id="app-frame">
+        <header
+            class="sticky top-0 z-30 px-5 pt-7 pb-4 border-b border-slate-50 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl flex justify-between items-center">
+                <div class="flex flex-col items-start gap-1 overflow-hidden">
+                    <h1 class="text-xl font-black tracking-tight leading-none text-slate-800 dark:text-white" id="header-title">Dashboard</h1>
+                    <p class="text-[11px] text-slate-400 font-bold transition-all leading-none" id="header-greeting">Hai, <span id="user-fname" class="text-indigo-500"></span> 👋</p>
+                </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleDarkMode()"
+                    class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 transition-transform active:scale-90">
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-yellow-400 fill-yellow-400/20"></i>
+                </button>
+                <div id="notif-btn-wrapper" class="relative cursor-pointer transition-transform active:scale-95"
+                    onclick="openNotifModal()">
+                    <div
+                        class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                    </div>
+                    <span id="notif-badge"
+                        class="absolute -top-1 -right-0.5 bg-red-600 text-white text-[9px] font-bold min-w-[15px] h-[15px] rounded-full flex items-center justify-center border-2 border-white dark:border-slate-900 transition-all shadow-sm" style="display: none;">0</span>
+                </div>
+                <button onclick="handleRefresh(this)" class="w-10 h-10 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-slate-500 transition-transform active:scale-90">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <!-- VIEW: HOME -->
+            <div id="view-home" class="view-section active p-5">
+                <div class="flex gap-3 mb-4">
+                    <div class="relative flex-1">
+                        <i data-lucide="search" class="absolute left-4 top-3.5 w-5 h-5 text-slate-400"></i>
+                        <input type="text" id="search-input" onkeyup="renderHome()" placeholder="Cari Plat..."
+                            class="input-box pl-12">
+                    </div>
+                    <button onclick="openModal('filter-modal')"
+                        class="w-12 bg-slate-900 dark:bg-slate-700 text-white rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition"><i
+                            data-lucide="list-filter" class="w-5 h-5"></i></button>
+                </div>
+
+                <!-- ALERT NOTIFIKASI BARU -->
+                <div id="unread-notif-alert" style="display:none;" onclick="openNotifs()" 
+                    class="mb-6 mx-1 p-4 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-200 dark:shadow-none flex items-center justify-between cursor-pointer active:scale-[0.98] transition">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center text-white">
+                            <i data-lucide="message-square" class="w-4 h-4"></i>
+                        </div>
+                        <p class="text-xs font-bold text-white"><span id="unread-count-alert">0</span> Notifikasi Baru Belum Dibaca</p>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-white/50"></i>
+                </div>
+                <!-- KARTU RINGKASAN (Interactive) -->
+                <div class="grid grid-cols-2 gap-3 mb-8">
+                    <div id="card-filter-all" onclick="setFilterStatus('all'); renderHome();"
+                        class="bg-indigo-600 dark:bg-indigo-700 p-4 rounded-[22px] text-white shadow-lg relative h-24 flex flex-col justify-between overflow-hidden cursor-pointer active:scale-[0.98] transition-all">
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold opacity-70 uppercase tracking-wider">Total Unit</p>
+                            <h2 class="text-3xl font-black mt-1" id="card-total">0</h2>
+                        </div>
+                    </div>
+                    <div id="card-filter-process" onclick="setFilterStatus('process'); renderHome();"
+                        class="bg-white dark:bg-slate-800 p-4 rounded-[22px] border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-all h-24 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Proses</p>
+                            <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-1" id="card-process">0</h2>
+                        </div>
+                    </div>
+                    <div id="card-filter-done" onclick="setFilterStatus('done'); renderHome();"
+                        class="bg-white dark:bg-slate-800 p-4 rounded-[22px] border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-all h-24 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Selesai</p>
+                            <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-1" id="card-done">0</h2>
+                        </div>
+                    </div>
+                    <div id="card-filter-late" onclick="setFilterStatus('late'); renderHome();"
+                        class="bg-white dark:bg-slate-800 p-4 rounded-[22px] border border-slate-100 dark:border-slate-700 shadow-sm flex flex-col justify-between cursor-pointer active:scale-[0.98] transition-all h-24 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <p class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">Telat</p>
+                            <h2 class="text-3xl font-black text-slate-800 dark:text-white mt-1" id="card-late">0</h2>
+                        </div>
+                    </div>
+                </div>
+                <h3 class="font-bold text-base mb-4 px-1">Daftar Kendaraan</h3>
+                <div id="unit-list" class="space-y-3"></div>
+            </div>
+
+            <!-- VIEW: MONITOR -->
+            <div id="view-monitor" class="view-section p-5 pt-2">
+                <div
+                    class="bg-indigo-600 dark:bg-indigo-700 p-5 rounded-[24px] text-white shadow-lg relative mb-6 flex justify-between items-center">
+                    <div>
+                        <p class="text-xs font-bold opacity-80 uppercase mb-1">Total Unit di Bengkel</p>
+                        <h3 class="text-3xl font-black" id="monitor-total-count">0</h3>
+                    </div>
+                    <div class="w-14 h-14 bg-indigo-400/20 rounded-2xl flex items-center justify-center text-white">
+                        <i data-lucide="activity" class="w-8 h-8"></i>
+                    </div>
+                </div>
+
+                <!-- Special Section for Waiting Spareparts -->
+                <div id="sparepart-monitor-card" onclick="openSparepartDetail()"
+                    class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800/50 p-5 rounded-[24px] mb-6 flex justify-between items-center cursor-pointer active:scale-[0.98] transition">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span>
+                            <p class="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase">Tunggu Sparepart</p>
+                        </div>
+                        <h3 class="text-3xl font-black text-amber-900 dark:text-white" id="monitor-sparepart-count">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-600 dark:text-amber-400">
+                        <i data-lucide="package" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Special Section for Late Units -->
+                <div id="late-monitor-card" onclick="openLateDetail()"
+                    class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 p-5 rounded-[24px] mb-6 flex justify-between items-center cursor-pointer active:scale-[0.98] transition">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                            <p class="text-xs font-bold text-red-700 dark:text-red-400 uppercase">Unit Telat</p>
+                        </div>
+                        <h3 class="text-3xl font-black text-red-900 dark:text-white" id="monitor-late-count">0</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-600 dark:text-red-400">
+                        <i data-lucide="alert-circle" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <div id="division-grid" class="grid grid-cols-2 gap-3"></div>
+            </div>
+
+            <!-- VIEW: CHART -->
+            <div id="view-chart" class="view-section p-5 pt-2 overflow-y-auto pb-32">
+                <div class="flex justify-end items-center mb-6">
+                    <button onclick="openModal('chart-filter-modal')"
+                        class="flex items-center gap-2 bg-white dark:bg-slate-800 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 dark:border dark:border-slate-700 shadow-sm"><i
+                            data-lucide="list-filter" class="w-3 h-3 text-indigo-500"></i> Filter: <span id="chart-period-label" class="text-indigo-600">-</span></button>
+                </div>
+                <div
+                    class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase">Traffic Unit</h4>
+                        <div class="flex bg-slate-100 dark:bg-slate-900 rounded-lg p-1">
+                            <button onclick="switchChartType('line')" id="btn-chart-line"
+                                class="p-1.5 rounded-md text-slate-500 active bg-white shadow-sm dark:bg-slate-700 dark:text-white transition"><i
+                                    data-lucide="activity" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="switchChartType('bar')" id="btn-chart-bar"
+                                class="p-1.5 rounded-md text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"><i
+                                    data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                    <div class="relative h-56"><canvas id="mainChart"></canvas></div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div
+                        class="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-2xl border border-blue-100 dark:border-blue-800 text-center">
+                        <p class="text-[9px] font-bold text-blue-500 uppercase">Masuk</p>
+                        <h3 class="text-xl font-black text-blue-700 dark:text-blue-400" id="stat-in">0</h3>
+                    </div>
+                    <div
+                        class="bg-green-50 dark:bg-green-900/20 p-3 rounded-2xl border border-green-100 dark:border-green-800 text-center">
+                        <p class="text-[9px] font-bold text-green-500 uppercase">Selesai</p>
+                        <h3 class="text-xl font-black text-green-700 dark:text-green-400" id="stat-out">0</h3>
+                    </div>
+                    <div
+                        class="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-2xl border border-orange-100 dark:border-orange-800 text-center">
+                        <p class="text-[9px] font-bold text-orange-500 uppercase">Sisa Unit</p>
+                        <h3 class="text-xl font-black text-orange-600 dark:text-orange-400" id="stat-active">0</h3>
+                        <p class="text-[8px] text-orange-400">Total di Bengkel</p>
+                    </div>
+                </div>
+
+                <!-- SA STATS FOR UMUM & FOREMAN -->
+                <div id="chart-sa-stats" class="mt-6 space-y-3" style="display: none;">
+                    <h4 class="font-bold text-sm mb-3">Performa SA Bulan Ini</h4>
+                    <div id="sa-stats-container" class="grid grid-cols-2 gap-3"></div>
+                </div>
+
+                <!-- NEW: LATE REASONS SUMMARY PANEL -->
+                <div id="late-reasons-summary" class="mt-8 space-y-3" style="display: none;">
+                    <div class="flex items-center justify-between mb-2 px-1">
+                        <h4 class="font-bold text-sm">Alasan Terlambat Terbaru</h4>
+                        <span class="text-[9px] font-black bg-red-100 text-red-600 px-2 py-0.5 rounded-full uppercase">Update Realtime</span>
+                    </div>
+                    <div id="late-reasons-container" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- VIEW: DIVISION DETAIL -->
+            <div id="view-division-detail" class="view-section p-5">
+                <button onclick="switchView('monitor')"
+                    class="mb-4 inline-flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-4 py-2 rounded-xl text-sm font-bold text-slate-600 dark:text-slate-300 shadow-sm active:scale-95 transition"><i
+                        data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                
+                <div class="mb-4">
+                    <h2 class="text-xl font-black dark:text-white" id="div-detail-title">Nama Divisi</h2>
+                </div>
+
+                <!-- Summary Cards Grid (Interactive Filter) -->
+                <div class="grid grid-cols-3 gap-2.5 mb-6">
+                    <div id="card-div-total" onclick="setDivFilter('all')" class="bg-indigo-600 p-3.5 rounded-[22px] text-white shadow-lg shadow-indigo-100 dark:shadow-none transition-all cursor-pointer">
+                        <p class="text-[8px] font-bold opacity-70 uppercase mb-1 tracking-wider leading-none">Total Unit</p>
+                        <h4 class="text-xl font-black" id="div-total-c">0</h4>
+                    </div>
+                    <div id="card-div-working" onclick="setDivFilter('working')" class="bg-white dark:bg-slate-800 p-3.5 rounded-[22px] border border-slate-100 dark:border-slate-700 shadow-sm transition-all cursor-pointer">
+                        <p class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 tracking-wider leading-none">Proses</p>
+                        <h4 class="text-xl font-black text-slate-800 dark:text-white" id="div-working-c">0</h4>
+                    </div>
+                    <div id="card-div-queue" onclick="setDivFilter('queue')" class="bg-white dark:bg-slate-800 p-3.5 rounded-[22px] border border-slate-100 dark:border-slate-700 shadow-sm transition-all cursor-pointer">
+                        <p class="text-[8px] font-bold text-slate-400 dark:text-slate-500 uppercase mb-1 tracking-wider leading-none">Antrian</p>
+                        <h4 class="text-xl font-black text-slate-800 dark:text-white" id="div-queue-c">0</h4>
+                    </div>
+                </div>
+
+                <!-- Filter Bar -->
+                <div class="flex gap-2 mb-5">
+                    <div class="flex-1 relative">
+                        <i data-lucide="search" class="absolute left-3.5 top-3 w-4 h-4 text-slate-400"></i>
+                        <input type="text" id="div-detail-search" class="input-box pl-10 h-10 text-xs bg-slate-50 dark:bg-slate-900 border-transparent focus:bg-white transition-all" placeholder="Cari Nopol atau SA..." oninput="handleDivSearch()">
+                    </div>
+                </div>
+
+                <div id="div-detail-list" class="space-y-3 pb-24"></div>
+            </div>
+
+            <!-- VIEW: PROFILE -->
+            <div id="view-profile" class="view-section p-6 text-center hidden">
+                <div class="mt-8 mb-6 relative inline-block">
+                    <div
+                        class="w-24 h-24 bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center">
+                        <i data-lucide="user" class="w-10 h-10 stroke-[2.5px]"></i>
+                    </div>
+                </div>
+                <h2 class="text-xl font-bold" id="profile-name">-</h2>
+                <p class="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/20 px-3 py-1 rounded-full inline-block mt-2 uppercase tracking-wider"
+                    id="profile-role">-</p>
+                    <div class="p-4 border-b border-slate-50 dark:border-slate-700 flex items-center gap-4">
+                        <div
+                            class="w-10 h-10 bg-slate-50 dark:bg-slate-700 rounded-full flex items-center justify-center text-slate-400">
+                            <i data-lucide="smartphone" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-sm text-slate-800 dark:text-white">Aplikasi Versi 1.5.8</p>
+                        </div>
+                    </div>
+                    <div class="px-4 py-3 bg-white dark:bg-slate-800 border-b border-slate-50 dark:border-slate-700 flex items-center justify-between transition">
+                         <div class="flex items-center gap-4">
+                             <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 rounded-full flex items-center justify-center text-indigo-600">
+                                 <i data-lucide="bell" class="w-5 h-5"></i>
+                             </div>
+                             <div class="text-left">
+                                 <p class="font-bold text-sm text-slate-800 dark:text-white">Suara Notifikasi</p>
+                                 <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Aktifkan Voice Update</p>
+                             </div>
+                         </div>
+                         <label class="relative inline-flex items-center cursor-pointer">
+                             <input type="checkbox" id="toggle-notif-sound" class="sr-only peer" onchange="confirmToggleSound(this.checked)">
+                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                         </label>
+                    </div>
+                    <button onclick="openModal('logout-modal')"
+                        class="w-full p-4 flex items-center gap-4 hover:bg-red-50 dark:hover:bg-red-900/20 transition group border-t border-slate-50 dark:border-slate-700 text-left">
+                        <div
+                            class="w-10 h-10 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center text-red-500">
+                            <i data-lucide="log-out" class="w-5 h-5 ml-1"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-red-600 text-sm">Keluar Aplikasi</p>
+                            <p class="text-xs text-red-400">Akhiri sesi ini</p>
+                        </div>
+                    </button>
+                <div class="mt-8 text-center mb-10 pb-10" id="powered-by-footer">
+                    <p class="text-[10px] font-bold text-slate-400 italic">Powered By:
+                        <a href="javascript:void(0)" onclick="openExternal('https://kangujang.id')"
+                            class="text-indigo-600 underline not-italic">kangujang.id</a>
+                    </p>
+                </div>
+            </div> <!-- End of view-profile -->
+
+        </main>
+
+        <nav class="bottom-nav fixed-w-limit">
+            <div onclick="switchView('home')" class="nav-item active" data-target="home"><i
+                    data-lucide="home"></i><span>Home</span></div>
+
+            <div class="flex-1 flex justify-center items-center">
+                <div onclick="switchView('monitor')" class="nav-item" id="nav-monitor-left" data-target="monitor" style="width:100%">
+                    <i data-lucide="pie-chart"></i><span>Pantau</span>
+                </div>
+                <div onclick="openModal('filter-modal')" class="nav-item" id="nav-filter-umum" style="display: none; width:100%">
+                    <i data-lucide="list-filter"></i><span>Filter</span>
+                </div>
+            </div>
+
+            <div class="fab-container">
+                <div id="nav-fab-container" class="w-full flex justify-center" style="display: none;">
+                    <div id="btn-floating-add" onclick="openModal('add-modal')" class="fab-btn cursor-pointer">
+                        <i data-lucide="plus" class="w-8 h-8 stroke-[3px]"></i>
+                    </div>
+                </div>
+                <div id="nav-monitor-center" class="w-full flex justify-center" style="display: none;">
+                    <div onclick="switchView('monitor')" class="fab-btn cursor-pointer bg-indigo-600" style="border: none; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);">
+                        <i data-lucide="pie-chart" class="w-8 h-8 stroke-[3px]"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div onclick="switchView('chart')" class="nav-item" data-target="chart"><i
+                    data-lucide="bar-chart-2"></i><span>Grafik</span></div>
+            <div onclick="switchView('profile')" class="nav-item" data-target="profile"><i
+                    data-lucide="user"></i><span>Profil</span></div>
+        </nav>
+
+
+        <!-- MODAL: FILTER HOME -->
+        <div id="filter-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('filter-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit">
+                <div class="p-6 flex-1 overflow-y-auto">
+                    <h3 class="font-bold text-lg mb-4">Filter Data</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Dari</label><input
+                                type="date" id="home-filter-start" class="input-box text-xs"></div>
+                        <div><label
+                                class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Sampai</label><input
+                                type="date" id="home-filter-end" class="input-box text-xs"></div>
+                    </div>
+                    <div class="mb-4" id="home-filter-sa-container">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Filter SA</label>
+                        <select id="home-filter-sa" class="input-box text-xs">
+                            <option value="all" selected>Semua Service Advisor</option>
+                        </select>
+                    </div>
+                    <div class="mb-6"><label
+                            class="text-[10px] font-bold text-slate-400 uppercase mb-2 block">Status</label>
+                        <div class="flex gap-2 flex-wrap">
+                            <button onclick="setFilterStatus('all')" id="fs-all"
+                                class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white transition">Semua</button>
+                            <button onclick="setFilterStatus('process')" id="fs-process"
+                                class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition">Proses</button>
+                            <button onclick="setFilterStatus('done')" id="fs-done"
+                                class="flex-1 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-500 transition">Selesai</button>
+                            <button onclick="setFilterStatus('late')" id="fs-late"
+                                class="flex-1 py-2 rounded-xl text-xs font-bold bg-red-100 text-red-500 border border-red-200 transition">Telat</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900 pb-10">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="resetHomeFilter()" 
+                            class="w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 py-3 rounded-xl font-bold active:scale-95 transition">Reset</button>
+                        <button onclick="applyHomeFilter()" id="btn-filter-apply"
+                            class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg active:scale-95 transition">Terapkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: DETAIL -->
+        <div id="detail-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('detail-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit h-[90vh]">
+                <div class="sheet-handle"></div>
+                <div
+                    class="px-6 pt-2 pb-4 border-b border-slate-50 dark:border-slate-800 z-20 sticky top-0 bg-white dark:bg-slate-900 rounded-t-[32px]">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h1 id="detail-model" class="text-2xl font-black text-slate-900 dark:text-white leading-tight">Model</h1>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span id="detail-plate" class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded">PLAT</span>
+                                <div id="detail-late-badge" style="display:none;" class="px-2 py-0.5 rounded bg-red-50 text-red-500 text-[8px] font-black uppercase">Unit Telat</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button id="btn-edit-mode" style="display:none;" onclick="toggleEditMode()"
+                                class="inline-flex flex-row items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2.5 py-1.5 rounded-lg border border-indigo-100 dark:border-indigo-800/50 transition active:scale-90 shadow-sm whitespace-nowrap">
+                                <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+                                <span class="text-[10px] font-black uppercase tracking-tight leading-none">Edit</span>
+                            </button>
+                            <button onclick="closeModal('detail-modal')"
+                                class="w-10 h-10 bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-400 active:scale-90 transition border border-slate-100 dark:border-slate-700">
+                                <i data-lucide="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div
+                        class="bg-slate-50 dark:bg-slate-800 p-4 rounded-2xl border border-slate-100 dark:border-slate-700 grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">SA</p>
+                            <p id="detail-sa" class="font-bold text-sm text-slate-800 dark:text-white truncate">-</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Warna</p>
+                            <p id="detail-color" class="font-bold text-sm text-slate-800 dark:text-white capitalize">-
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Masuk</p>
+                            <p id="detail-in" class="font-bold text-sm text-slate-800 dark:text-white">-</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Estimasi</p>
+                            <p id="detail-est" class="font-bold text-sm text-indigo-600 dark:text-indigo-400">-</p>
+                        </div>
+                        <div class="col-span-2">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase">Keterangan</p>
+                            <p id="detail-ket" class="font-bold text-sm text-slate-800 dark:text-white">-</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 overflow-y-auto flex-1">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 pl-2">Progress
+                        Pengerjaan</p>
+                    <div id="timeline-container"></div>
+                    <div class="h-6"></div>
+                    <!-- Action Buttons for Admin/Foreman -->
+                    <div id="admin-actions-container" class="space-y-3" style="display: none;">
+                        <button onclick="confirmDeleteUnit()" 
+                                class="w-full py-4 rounded-2xl bg-red-50 text-red-600 border border-red-100 font-bold text-sm flex items-center justify-center gap-2 active:bg-red-100 transition shadow-sm">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Unit Ini
+                        </button>
+                    </div>
+                    <div class="h-10"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: EDIT DATA -->
+        <div id="edit-data-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('edit-data-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit h-[85vh]">
+                <div class="px-6 py-4 flex justify-between items-center bg-white dark:bg-slate-900 border-b border-slate-50 dark:border-slate-800 rounded-t-[30px]">
+                    <h3 class="text-lg font-black text-slate-800 dark:text-white">Edit Data Unit</h3>
+                    <button onclick="closeModal('edit-data-modal')" class="w-8 h-8 flex items-center justify-center text-slate-400 bg-slate-50 dark:bg-slate-800 rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
+                </div>
+                <div class="p-6 overflow-y-auto flex-1">
+                    <div class="space-y-5">
+                        <input type="hidden" id="edit-id">
+                        
+                        <div class="grid grid-cols-1 gap-4" id="edit-sa-container">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Service Advisor (SA)</label>
+                                <select id="edit-sa-select" class="input-box bg-slate-50 border-slate-200 focus:border-indigo-500 transition-all"></select>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Nomor Polisi</label>
+                                <input type="text" id="edit-plate" class="input-box bg-slate-50 font-bold tracking-tight" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Model Kendaraan</label>
+                                <input type="text" id="edit-model" class="input-box bg-slate-50" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Warna</label>
+                                <input type="text" id="edit-color" class="input-box bg-slate-50" oninput="this.value = this.value.toUpperCase()">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Tgl Masuk</label>
+                                <input type="date" id="edit-in" class="input-box bg-slate-50">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Estimasi Selesai</label>
+                                <input type="date" id="edit-est" class="input-box bg-slate-50">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-400 uppercase mb-1.5 block">Keterangan / Progress</label>
+                            <textarea id="edit-ket" class="input-box text-sm bg-slate-50 focus:ring-2 focus:ring-indigo-500/20" rows="2" placeholder="Tulis catatan perkembangan unit di sini..."></textarea>
+                        </div>
+
+                        <!-- LATE REASON INTEGRATED TO EDIT MODAL -->
+                        <div id="edit-late-reason-container">
+                            <label class="text-[11px] font-bold text-red-400 uppercase mb-1.5 block">Alasan Keterlambatan (Optional)</label>
+                            <textarea id="edit-late-reason" class="input-box text-sm bg-red-50/30 border-red-100 focus:ring-2 focus:ring-red-500/20" rows="2" placeholder="Jika unit telat, isi alasannya di sini..."></textarea>
+                        </div>
+
+                        <!-- Working/Antrian Toggle -->
+                        <div id="edit-working-container" class="flex items-center justify-between p-4 bg-indigo-50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-800/30 transition-all mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-indigo-500/10 rounded-xl flex items-center justify-center text-indigo-600">
+                                    <i data-lucide="activity" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-indigo-900 dark:text-indigo-400">Sedang Dikerjakan?</p>
+                                    <p class="text-[10px] text-indigo-700/60 font-medium">OFF berarti unit masih dalam antrian</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="edit-is-working" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+
+                        <!-- Enhanced Toggle Design Sparepart -->
+                        <div class="flex items-center justify-between p-4 bg-amber-50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-800/30 transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-600">
+                                    <i data-lucide="package" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-bold text-amber-900 dark:text-amber-400">Menunggu Sparepart?</p>
+                                    <p class="text-[10px] text-amber-700/60 font-medium">Aktifkan jika part belum tersedia</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="edit-waiting-sparepart" class="sr-only peer">
+                                <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900 pb-10">
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="closeModal('edit-data-modal'); openModal('detail-modal')"
+                            class="py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-2xl text-sm transition-all active:scale-[0.97]">Batal</button>
+                        <button onclick="saveEditData()" id="btn-save-edit"
+                            class="py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl text-sm shadow-lg shadow-indigo-200 dark:shadow-none transition-all active:scale-[0.97]">
+                            Simpan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: CHART FILTER -->
+        <div id="chart-filter-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('chart-filter-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit" style="height:auto">
+                <div class="p-6">
+                    <h3 class="font-bold text-lg mb-4">Filter Grafik</h3>
+                    <div class="grid grid-cols-2 gap-3 mb-6">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Bulan</label>
+                            <select id="chart-month" class="input-box">
+                                <option value="1">Januari</option>
+                                <option value="2">Februari</option>
+                                <option value="3">Maret</option>
+                                <option value="4">April</option>
+                                <option value="5">Mei</option>
+                                <option value="6">Juni</option>
+                                <option value="7">Juli</option>
+                                <option value="8">Agustus</option>
+                                <option value="9">September</option>
+                                <option value="10">Oktober</option>
+                                <option value="11">November</option>
+                                <option value="12">Desember</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Tahun</label>
+                            <select id="chart-year" class="input-box"></select>
+                        </div>
+                    </div>
+                    <button onclick="loadChartData(true)"
+                        class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold shadow-lg">Terapkan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: TAMBAH DATA (ADD) -->
+        <div id="add-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('add-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit">
+                <div class="px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold">Input Unit Baru</h3><button onclick="closeModal('add-modal')"
+                        class="w-8 h-8 bg-slate-50 rounded-full flex items-center justify-center text-slate-400"><i
+                            data-lucide="x" class="w-5 h-5"></i></button>
+                </div>
+                <form id="form-add" onsubmit="saveNewUnit(event)"
+                    class="p-6 space-y-4 overflow-y-auto flex-1">
+                    <div class="grid grid-cols-1 gap-4">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Nopol</label>
+                            <input type="text" id="add-plate" class="input-box tracking-tight font-bold" oninput="this.value = this.value.toUpperCase()" onblur="handlePlateCheck(this.value, 'add')" required></div>
+                    </div>
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">Model</label><input type="text"
+                            id="add-model" class="input-box" oninput="this.value = this.value.toUpperCase()" required>
+                    </div>
+                    <div id="add-sa-container"><label class="text-[10px] font-bold text-slate-400 uppercase">SA</label><select id="add-sa"
+                            class="input-box" required>
+                            <option value="" disabled selected>Pilih SA...</option>
+                        </select></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Warna</label><input
+                                type="text" id="add-color" class="input-box"
+                                oninput="this.value = this.value.toUpperCase()"></div>
+                        <div><label class="text-[10px] font-bold text-slate-400 uppercase">Masuk</label><input
+                                type="date" id="add-in" class="input-box" required></div>
+                    </div>
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">Estimasi</label><input
+                            type="date" id="add-est" class="input-box" required></div>
+                    <div><label class="text-[10px] font-bold text-slate-400 uppercase">Keterangan</label><textarea
+                            id="add-ket" class="input-box text-sm" rows="2"
+                            placeholder="Tulis keterangan di sini..."></textarea></div>
+                </form>
+                <div class="p-6 border-t border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900 pb-10">
+                    <button form="form-add" type="submit"
+                        class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-indigo-100">Simpan Data</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: CONFIRM UPDATE -->
+        <div id="confirm-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('confirm-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit" style="height:auto">
+                <div class="p-6 overflow-y-auto flex-1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600">
+                            <i data-lucide="check-circle" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">Update Status?</h3>
+                            <p class="text-xs text-slate-500">Ke: <span id="conf-step-name"
+                                    class="font-bold text-indigo-600"></span></p>
+                        </div>
+                    </div>
+                    <input type="hidden" id="conf-unit-id"><input type="hidden" id="conf-step-idx">
+                    <textarea id="conf-note" class="input-box mb-4 text-sm" rows="2"
+                        placeholder="Catatan (opsional)..."></textarea>
+                    
+                    <div id="conf-working-container" class="flex items-center gap-3 bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-800/50 mb-3">
+                        <div class="w-10 h-10 bg-indigo-500/10 rounded-full flex items-center justify-center text-indigo-600">
+                            <i data-lucide="list-video" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs font-bold text-indigo-800 dark:text-indigo-400">Unit Sudah Dikerjakan?</p>
+                            <p id="label-working" class="text-[10px] text-indigo-600/70">OFF: Dalam Antrian</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="conf-is-working" class="sr-only peer" onchange="toggleWorkingLabel(this.checked)">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                        </label>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-amber-50 dark:bg-amber-900/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-800/50 mb-6">
+                        <div class="w-10 h-10 bg-amber-500/10 rounded-full flex items-center justify-center text-amber-600">
+                            <i data-lucide="package" class="w-5 h-5"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-xs font-bold text-amber-800 dark:text-amber-400">Tunggu Sparepart?</p>
+                            <p class="text-[10px] text-amber-600/70">Aktifkan jika unit nunggu sparepart</p>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="conf-waiting-sparepart" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                        </label>
+                    </div>
+                </div>
+                <div class="p-6 border-t border-slate-50 dark:border-slate-800 bg-white dark:bg-slate-900 pb-10">
+                    <div class="flex gap-3">
+                        <button onclick="closeModal('confirm-modal')"
+                            class="flex-1 py-3 bg-slate-100 font-bold rounded-xl text-sm">Batal</button>
+                        <button onclick="submitUpdate()" id="btn-submit-update"
+                            class="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-lg">Ya,
+                            Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: LOGOUT -->
+        <div id="logout-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('logout-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit" style="height:auto">
+                <div class="p-8 text-center">
+                    <div
+                        class="w-16 h-16 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="log-out" class="w-8 h-8 ml-1"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Ingin Keluar?</h3>
+                    <div class="flex gap-3 mt-6">
+                        <button onclick="closeModal('logout-modal')"
+                            class="flex-1 py-3.5 bg-slate-100 font-bold rounded-xl text-sm">Batal</button>
+                        <button onclick="confirmLogout(event)" id="btn-logout-confirm"
+                            class="flex-1 py-3.5 bg-red-600 text-white font-bold rounded-xl text-sm transition flex items-center justify-center gap-2">Ya, Keluar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: SOUND PICKER (POP UP SCROLL) -->
+        <div id="sound-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('sound-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit h-auto">
+                <div class="sheet-handle"></div>
+                <div class="px-6 pb-8">
+                     <h3 class="text-lg font-black mb-6">Pilih Suara Notifikasi</h3>
+                     <div class="space-y-3 overflow-y-auto max-h-[50vh] pr-2 hide-scrollbar">
+                         <div onclick="selectSound('off', 'Mati (Hening)')" class="sound-opt flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent active:border-indigo-500 transition">
+                             <span class="font-bold text-sm">Mati (Hening)</span>
+                         </div>
+                         <div onclick="selectSound('voice_normal', 'Suara')" class="sound-opt flex items-center justify-between p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent active:border-indigo-500 transition">
+                             <span class="font-bold text-sm">Suara</span>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: NOTIFIKASI (ZOOM POP UP) -->
+        <div id="notif-modal" class="overlay flex items-center justify-center px-4">
+            <div class="absolute inset-0" onclick="closeModal('notif-modal')"></div>
+            <div class="zoom-modal w-[95%] max-w-[400px] bg-white dark:bg-slate-900 rounded-[20px] shadow-2xl border border-slate-100 dark:border-slate-800 z-10 overflow-hidden">
+                <div class="px-6 py-5 flex justify-between items-center border-b border-slate-50 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-10">
+                    <div class="flex items-center gap-2.5">
+                        <h3 class="text-xl font-black">Notifikasi</h3>
+                        <span id="notif-count-badge" class="text-[10px] font-black text-white bg-indigo-600 rounded-full w-6 h-6 flex items-center justify-center">0</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="markAllAsRead()" title="Tandai Semua Dibaca" class="w-9 h-9 flex items-center justify-center text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl active:scale-90 transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/><path d="m22 10-9.5 9.5L10 17"/></svg>
+                        </button>
+                        <button id="btn-clear-notifs" onclick="clearNotifHistory()" title="Hapus Semua" class="w-9 h-9 items-center justify-center text-red-500 bg-red-50 dark:bg-red-900/20 rounded-xl active:scale-90 transition" style="display:none">
+                            <i data-lucide="trash-2" class="w-[18px] h-[18px]"></i>
+                        </button>
+                        <button onclick="closeModal('notif-modal')" class="w-9 h-9 flex items-center justify-center text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-xl active:scale-90 transition">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-4 overflow-y-auto max-h-[75vh] custom-scrollbar">
+                    <div id="notif-list" class="space-y-3.5 pb-12"></div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- MODAL: DUPLICATE WARNING -->
+        <div id="duplicate-warning-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('duplicate-warning-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit" style="height:auto">
+                <div class="p-8 text-center">
+                    <div
+                        class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Unit Sudah Terdaftar!</h3>
+                    <p id="duplicate-msg" class="text-sm text-slate-600 dark:text-slate-400 mb-6 leading-relaxed"></p>
+                    <div class="flex gap-3">
+                        <button onclick="closeModal('duplicate-warning-modal')"
+                            class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-lg">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: DELETE CONFIRMATION -->
+        <div id="delete-confirm-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('delete-confirm-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit" style="height:auto">
+                <div class="p-8 text-center">
+                    <div class="w-20 h-20 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm border border-red-100 dark:border-red-800/50">
+                        <i data-lucide="trash-2" class="w-10 h-10"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold mb-2 text-slate-900 dark:text-white">Hapus Data Unit?</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-8 leading-relaxed px-4">
+                        Tindakan ini akan menghapus data <span id="delete-unit-plate" class="font-bold text-slate-900 dark:text-white"></span> secara permanen dari sistem.
+                    </p>
+                    <div class="flex flex-col gap-3">
+                        <button onclick="executeDeleteUnit()"
+                            class="w-full py-4 bg-red-600 text-white font-bold rounded-2xl text-sm shadow-lg shadow-red-200 dark:shadow-none active:scale-[0.98] transition">Yakin, Hapus Sekarang</button>
+                        <button onclick="closeModal('delete-confirm-modal')"
+                            class="w-full py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold rounded-2xl text-sm active:scale-[0.98] transition">Batalkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: ADD LATE REASON -->
+        <div id="late-reason-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('late-reason-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit" style="height:auto">
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center text-red-500">
+                            <i data-lucide="alert-circle" class="w-7 h-7"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black dark:text-white">Alasan Telat</h3>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Berikan alasan mengapa unit ini telat</p>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="late-reason-id">
+                    <div class="mb-6">
+                        <label class="text-[11px] font-bold text-slate-400 uppercase mb-2 block">Isi Alasan / Catatan Kendala</label>
+                        <textarea id="late-reason-text" class="input-box bg-slate-50 border-slate-200 focus:border-red-500 transition-all text-sm" rows="4" placeholder=""></textarea>
+                    </div>
+        <!-- MODAL: NOTIF SETTING CONFIRM -->
+        <div id="notif-confirm-modal" class="overlay">
+            <div class="absolute inset-0" onclick="cancelToggleSound()"></div>
+            <div class="bottom-sheet fixed-w-limit h-auto">
+                <div class="p-8 text-center">
+                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 text-indigo-600">
+                        <i data-lucide="help-circle" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-lg font-black mb-2" id="notif-confirm-title">Konfirmasi Perubahan</h3>
+                    <p class="text-xs text-slate-400 mb-6" id="notif-confirm-msg">Apakah Anda yakin ingin mengubah pengaturan suara notifikasi?</p>
+                    <div class="flex gap-3">
+                        <button onclick="cancelToggleSound()" class="flex-1 py-3.5 bg-slate-100 dark:bg-slate-800 font-bold rounded-xl text-sm">Batal</button>
+                        <button onclick="executeToggleSound()" class="flex-1 py-3.5 bg-indigo-600 text-white font-bold rounded-xl text-sm shadow-lg">Ya, Ubah</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: ACTION SUCCESS -->
+        <div id="action-success-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('action-success-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit h-auto">
+                <div class="p-8 text-center">
+                    <div class="w-20 h-20 bg-green-50 dark:bg-green-900/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="check-circle" class="w-12 h-12"></i>
+                    </div>
+                    <h3 class="text-xl font-black mb-3">Berhasil!</h3>
+                    <p class="text-sm text-slate-500 mb-8" id="action-success-msg">Tindakan telah berhasil dilakukan.</p>
+                    <button onclick="closeModal('action-success-modal')" class="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl shadow-xl">Selesai</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: NOTIF SETTING SUCCESS -->
+        <div id="notif-success-modal" class="overlay">
+            <div class="absolute inset-0" onclick="closeModal('notif-success-modal')"></div>
+            <div class="bottom-sheet fixed-w-limit h-auto">
+                <div class="p-8 text-center">
+                    <div class="w-20 h-20 bg-green-50 dark:bg-green-900/20 text-green-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="check-circle" class="w-12 h-12"></i>
+                    </div>
+                    <h3 class="text-xl font-black mb-3">Berhasil Diperbarui</h3>
+                    <p class="text-sm text-slate-500 mb-8">Pengaturan suara notifikasi Anda telah berhasil diperbarui.</p>
+                    <button onclick="closeModal('notif-success-modal')" class="w-full py-4 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-bold rounded-2xl shadow-xl">Selesai</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="toast"><i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i><span
+                id="toast-msg">Berhasil!</span></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="capacitor.js"></script>
+    <script src="js/store.js?v=2.9.4"></script>
+    <script src="js/main.js?v=2.9.4"></script>
+    <script src="js/auth.js?v=2.9.4"></script>
+    <script src="js/mobile.js?v=2.9.4"></script>
+    <script>
+        // Safety icon render
+        window.addEventListener('load', () => {
+             if(typeof lucide !== 'undefined') lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

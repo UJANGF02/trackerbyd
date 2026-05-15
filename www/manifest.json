@@ -1,0 +1,17 @@
+{
+    "name": "Tracking Unit",
+    "short_name": "Tracking Unit",
+    "theme_color": "#4f46e5",
+    "background_color": "#ffffff",
+    "display": "standalone",
+    "orientation": "portrait",
+    "scope": "/",
+    "start_url": "login-apps.html",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "192x192 512x512",
+            "type": "image/x-icon"
+        }
+    ]
+}

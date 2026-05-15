@@ -1,0 +1,48 @@
+{
+  "name": "trackingunitbyd",
+  "version": "1.6.0",
+  "description": "Tracking Unit Bodypaint BYD Application",
+  "main": "electron-main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:dashboard": "electron-builder --win"
+  },
+  "keywords": [],
+  "author": "Kang Ujang",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/app": "^8.1.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/push-notifications": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.trackingunit_byd.app",
+    "productName": "Tracker Bodypaint BYD",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "icon.png",
+      "target": "portable"
+    },
+    "nsis": {
+      "oneClick": true,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Tracker BYD Dashboard"
+    },
+    "files": [
+      "**/*",
+      "!android/**/*",
+      "!node_modules/**/*"
+    ]
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "electron": "^42.0.0"
+  }
+}

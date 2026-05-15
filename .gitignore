@@ -1,0 +1,29 @@
+# Android build files
+.gradle/
+build/
+app/build/
+captures/
+*.apk
+*.ap_
+*.dex
+*.class
+
+# Native/Build Artifacts
+bin/
+gen/
+
+# Secret files
+.env
+local.properties
+*.keystore
+!debug.keystore
+
+# Editor settings
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Web/Node (jika ada)
+node_modules/
+dist/

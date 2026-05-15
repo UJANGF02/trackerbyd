@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Tracking Unit BP</string>
+    <string name="title_activity_main">Tracking Unit BP</string>
+    <string name="package_name">com.trackingunit_byd.app</string>
+    <string name="custom_url_scheme">com.trackingunit_byd.app</string>
+</resources>

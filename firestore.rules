@@ -1,0 +1,15 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Aturan untuk project Tracking Unit Mugen
+    // Mengizinkan baca dan tulis ke semua koleksi
+    // Catatan: Karena aplikasi menggunakan autentikasi custom (users.json) 
+    // dan bukan Firebase Auth, kita mengizinkan akses publik agar aplikasi tetap berjalan.
+    
+    match /{document=**} {
+      allow read, write: if true;
+    }
+  }
+}

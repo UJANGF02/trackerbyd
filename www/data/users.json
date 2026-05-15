@@ -1,0 +1,58 @@
+[
+    {
+        "id": 1,
+        "username": "Admin",
+        "password": "Admin123*",
+        "fullname": "Administrator",
+        "role": "admin"
+    },
+    {
+        "id": 2,
+        "username": "Paujan",
+        "password": "Paujan01",
+        "fullname": "Paujan",
+        "role": "foreman"
+    },
+    {
+        "id": 3,
+        "username": "Sandy",
+        "password": "Sandy02",
+        "fullname": "Sandy",
+        "role": "sa"
+    },
+    {
+        "id": 4,
+        "username": "Tjahyadi",
+        "password": "Tjahyadi01",
+        "fullname": "Tjahyadi",
+        "role": "sa"
+    },
+    {
+        "id": 5,
+        "username": "Bodyrepair",
+        "password": "Bodyrepair",
+        "fullname": "Body Repair",
+        "role": "umum"
+    },
+    {
+        "id": 6,
+        "username": "Dani",
+        "password": "Dani01",
+        "fullname": "Dani",
+        "role": "qc"
+    },
+    {
+        "id": 7,
+        "username": "Ujang",
+        "password": "Ujang01",
+        "fullname": "Ujang (Admin BP)",
+        "role": "admin_bp"
+    },
+    {
+        "id": 8,
+        "username": "Koordinator",
+        "password": "Koordinator01",
+        "fullname": "Koordinator",
+        "role": "koordinator"
+    }
+]

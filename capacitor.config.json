@@ -1,0 +1,9 @@
+{
+  "appId": "com.trackingunit_byd.app",
+  "appName": "Tracking Unit BP",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "allowNavigation": ["*"]
+  }
+}
