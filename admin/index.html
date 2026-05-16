@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+    </script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Tracker Bodypaint BYD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    
+    <!-- Firebase SDK (v11) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, where, onSnapshot, orderBy, limit, setDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC7efhwFGSiNQWXvwqKgeNJP1g4Mx7D4aQ",
+            authDomain: "trackingunit-byd.firebaseapp.com",
+            projectId: "trackingunit-byd",
+            storageBucket: "trackingunit-byd.firebasestorage.app",
+            messagingSenderId: "554061694215",
+            appId: "1:554061694215:web:869bfdd502fd5777fef1a2"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.fbDB = db;
+        window.fbCollection = collection;
+        window.fbAddDoc = addDoc;
+        window.fbGetDocs = getDocs;
+        window.fbUpdateDoc = updateDoc;
+        window.fbDeleteDoc = deleteDoc;
+        window.fbDoc = doc;
+        window.fbQuery = query;
+        window.fbWhere = where;
+        window.fbOnSnapshot = onSnapshot;
+        window.fbOrderBy = orderBy;
+        window.fbLimit = limit;
+        window.fbSetDoc = setDoc;
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Mobile Sidebar Overlays */
+        #aside-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(2px);
+            z-index: 40;
+        }
+
+        #aside-overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 1024px) {
+            aside {
+                position: fixed;
+                left: -100%;
+                top: 0;
+                bottom: 0;
+                z-index: 50;
+                transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            aside.active {
+                left: 0;
+            }
+
+            main {
+                padding: 1.5rem !important;
+            }
+        }
+
+        /* Permission Checkbox Style */
+        .perm-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .perm-card:has(input:checked) {
+            background-color: #eef2ff; /* indigo-50 */
+            border-color: #c7d2fe; /* indigo-200 */
+        }
+        .perm-card:has(input:checked) i {
+            color: #4f46e5; /* indigo-600 */
+        }
+        .perm-card:has(input:checked) span {
+            color: #4338ca; /* indigo-700 */
+        }
+
+        /* Smooth Modal Zoom */
+        .modal-zoom {
+            animation: modalZoom 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalZoom {
+            from { opacity: 0; transform: scale(0.9) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.3s cubic-bezier(0, 0, 0.2, 1);
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* Toast Animation */
+        .toast-active {
+            animation: toastIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        .toast-exit {
+            animation: toastOut 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        @keyframes toastIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toastOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(120%); opacity: 0; }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 flex min-h-screen">
+
+    <div id="aside-overlay" onclick="toggleSidebar()"></div>
+
+    <aside id="sidebar" class="w-72 bg-[#0f172a] border-r border-slate-800 flex flex-col shrink-0 shadow-2xl">
+        <div class="p-8 flex items-center justify-between">
+            <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                        <i data-lucide="car-front" class="w-5 h-5"></i>
+                    </div>
+                    <h1 class="text-xl font-black text-white tracking-tight">BYD<span class="text-indigo-400">Tracker</span></h1>
+                </div>
+                <span class="text-[9px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1">Version 1.5.0</span>
+            </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-slate-400">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="px-6 py-4">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 ml-2">Menu Utama</p>
+            <nav class="space-y-1.5">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard
+                </button>
+                <button onclick="switchTab('users')" id="nav-users"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="users" class="w-5 h-5"></i> Data User
+                </button>
+                <button onclick="switchTab('report')" id="nav-report"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="clipboard-list" class="w-5 h-5"></i> UNIT SA
+                </button>
+                <button onclick="switchTab('notifs')" id="nav-notifs"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="bell-ring" class="w-5 h-5"></i> Pusat Notifikasi
+                </button>
+            </nav>
+        </div>
+
+        <div class="px-6 py-4 mt-4">
+            <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4 ml-2">Konfigurasi</p>
+            <nav class="space-y-1.5">
+                <button onclick="switchTab('permissions')" id="nav-permissions"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i> Izin Akses
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings"
+                    class="w-full flex items-center gap-3 px-5 py-3.5 rounded-2xl font-bold text-sm transition text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i data-lucide="settings-2" class="w-5 h-5"></i> Pengaturan
+                </button>
+            </nav>
+        </div>
+
+        <div class="mt-auto p-6">
+            <button onclick="Auth.logout()" class="w-full flex items-center justify-center gap-3 py-4 rounded-2xl bg-red-500/10 text-red-500 font-black text-sm border border-red-500/20 hover:bg-red-500 hover:text-white transition-all group">
+                <i data-lucide="log-out" class="w-5 h-5 group-hover:-translate-x-1 transition-transform"></i> LOGOUT SISTEM
+            </button>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-x-hidden relative flex flex-col">
+        <!-- HEADER STICKY (DESKTOP) -->
+        <div class="hidden lg:flex sticky top-0 z-[60] bg-slate-50/80 backdrop-blur-md px-8 py-5 border-b border-slate-200/50 justify-between items-center mb-6">
+            <div>
+                <h2 class="text-xl font-black text-slate-800 leading-tight" id="page-title">Ringkasan Bengkel</h2>
+                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-0.5">Administrator Panel</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="handleHardRefresh(this)" class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 transition-all hover:border-indigo-500 hover:text-indigo-600 active:scale-90 shadow-sm">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                </button>
+                <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="w-10 h-10 rounded-xl bg-slate-50 text-slate-400 flex items-center justify-center border border-slate-100 shadow-inner" id="admin-initial">
+                        <i data-lucide="user" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-black text-slate-800 leading-none" id="admin-name">Administrator</span>
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter mt-1">Super Admin</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HEADER STICKY (MOBILE) -->
+        <div class="lg:hidden sticky top-0 z-[60] bg-white/90 backdrop-blur-md px-4 py-4 border-b border-slate-200 flex items-center justify-between mb-6">
+            <button onclick="toggleSidebar()" class="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-slate-600">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-sm font-black text-slate-800 uppercase tracking-tight" id="mobile-page-title">Dashboard</h2>
+                <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center" id="mobile-admin-initial">
+                    <i data-lucide="user" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-8 pt-0 lg:pt-0">
+
+        <!-- TAB: DASHBOARD -->
+        <div id="tab-dashboard" class="tab-content active">
+            
+            <!-- DASHBOARD FILTER -->
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-8">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="filter" class="w-4 h-4 text-slate-400"></i>
+                        <select onchange="setDashboardPeriod(this.value)" id="dash-period-select" class="bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-100 transition cursor-pointer">
+                            <option value="all">Semua Data</option>
+                            <option value="today">Hari Ini</option>
+                            <option value="month">Bulan Ini</option>
+                            <option value="year">Tahun Ini</option>
+                            <option value="custom">Rentang Tanggal</option>
+                        </select>
+                    </div>
+                    <div id="dash-date-range" class="hidden flex items-center gap-2 bg-slate-50 p-1.5 rounded-xl border border-slate-200">
+                        <div class="flex items-center gap-2 px-2">
+                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <input type="date" id="dash-filter-start" onchange="renderDashboard()" class="bg-transparent border-none outline-none text-[11px] font-bold text-slate-600 w-28">
+                        </div>
+                        <div class="w-px h-4 bg-slate-200"></div>
+                        <div class="flex items-center gap-2 px-2">
+                            <input type="date" id="dash-filter-end" onchange="renderDashboard()" class="bg-transparent border-none outline-none text-[11px] font-bold text-slate-600 w-28">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Unit</p>
+                    <h3 class="text-3xl font-black text-slate-800" id="d-total">0</h3>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-blue-400 uppercase mb-1">Unit Masuk</p>
+                    <h3 class="text-3xl font-black text-blue-600" id="d-in">0</h3>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase mb-1">Proses</p>
+                    <h3 class="text-3xl font-black text-indigo-600" id="d-process">0</h3>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-red-400 uppercase mb-1">Unit Telat</p>
+                    <h3 class="text-3xl font-black text-red-600" id="d-late">0</h3>
+                </div>
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <p class="text-[10px] font-bold text-green-400 uppercase mb-1">Unit Keluar</p>
+                    <h3 class="text-3xl font-black text-green-600" id="d-done">0</h3>
+                </div>
+            </div>
+
+            <!-- TRAFIK HARIAN -->
+            <div class="mb-8">
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <i data-lucide="trending-up" class="w-4 h-4"></i> Trafik Harian Unit
+                </h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="log-in" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Unit Masuk</p>
+                            <h4 class="text-2xl font-black text-slate-800" id="d-traffic-in">0</h4>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
+                            <i data-lucide="log-out" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">Unit Keluar</p>
+                            <h4 class="text-2xl font-black text-slate-800" id="d-traffic-out">0</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <h3 class="font-bold text-slate-800">Data Unit Kendaraan</h3>
+                    <div class="relative w-full md:w-64 group">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition"></i>
+                        <input type="text" id="dash-search-input" oninput="renderDashboard()" placeholder="Cari Plat atau No WO..." 
+                            class="w-full bg-slate-50 border border-slate-200 pl-11 pr-4 py-2.5 rounded-xl text-xs outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition">
+                    </div>
+                </div>
+                <table class="w-full text-left text-sm text-slate-600 min-w-[600px]">
+                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                        <tr>
+                            <th class="px-6 py-4">Nopol</th>
+                            <th class="px-6 py-4">Model</th>
+                            <th class="px-6 py-4">Masuk</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="d-units-tbody">
+                        <!-- Data Unit goes here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: USERS -->
+        <div id="tab-users" class="tab-content">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-lg">Daftar Pengguna</h3>
+                        <p class="text-xs text-slate-400">Total terdaftar: <span id="u-total-count" class="font-bold text-indigo-600">0</span> user</p>
+                    </div>
+                    <button onclick="openUserModal()" 
+                        class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition flex items-center gap-2">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah User Baru
+                    </button>
+                </div>
+                <table class="w-full text-left text-sm text-slate-600 min-w-[500px]">
+                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                        <tr>
+                            <th class="px-6 py-4">Username</th>
+                            <th class="px-6 py-4">Nama Lengkap</th>
+                            <th class="px-6 py-4">Role</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="u-users-tbody">
+                        <!-- Data Users goes here -->
+                    </tbody>
+                </table>
+                <div class="p-6 text-xs text-slate-400 bg-slate-50 border-t border-slate-100">
+                    *Izin akses role disimpan secara realtime di Cloud Firestore.
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: REPORT -->
+        <div id="tab-report" class="tab-content">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3 w-full md:w-auto">
+                    <div class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center shrink-0">
+                        <i data-lucide="filter" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Filter Laporan</p>
+                        <select id="report-sa-select" onchange="handleSASelect(this.value)"
+                            class="w-full bg-transparent border-none p-0 font-bold text-slate-800 outline-none focus:ring-0 cursor-pointer">
+                            <option value="">Semua Service Advisor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- SEARCH UNIT SA -->
+                <div class="flex-1 w-full md:w-auto relative group">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-600 transition"></i>
+                    <input type="text" id="report-search-input" oninput="handleReportSearch(this.value)"
+                        placeholder="Cari Nopol atau Model..."
+                        class="w-full bg-slate-50 border border-slate-200 pl-11 pr-4 py-3 rounded-xl text-sm outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition">
+                </div>
+                
+                <div class="flex bg-slate-100 p-1 rounded-xl w-full md:w-auto">
+                    <button onclick="toggleReportView('cards')" id="btn-view-cards"
+                        class="flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-bold transition bg-white text-indigo-600 shadow-sm">
+                        <i data-lucide="layout-grid" class="w-4 h-4 inline mr-1"></i> Card View
+                    </button>
+                    <button onclick="toggleReportView('table')" id="btn-view-table"
+                        class="flex-1 md:flex-none px-4 py-2 rounded-lg text-xs font-bold transition text-slate-500 hover:bg-white/50">
+                        <i data-lucide="table" class="w-4 h-4 inline mr-1"></i> Table View
+                    </button>
+                </div>
+            </div>
+
+            <div id="sa-report-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+            <div id="master-report-table-box" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto hidden">
+                <div class="p-6 border-b border-slate-100 bg-slate-50/50">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-600"></i> Sebaran Unit (Semua SA)</h3>
+                </div>
+                <div class="p-6 flex gap-4 overflow-x-auto custom-scrollbar" id="master-distribution"></div>
+
+                <div class="p-6 border-b border-slate-100 bg-slate-50/50 border-t">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="list" class="w-5 h-5 text-indigo-600"></i> Daftar Semua Unit</h3>
+                </div>
+                <table class="w-full text-left text-sm text-slate-600 min-w-[800px]">
+                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                        <tr>
+                            <th class="px-6 py-4">Nopol</th>
+                            <th class="px-6 py-4">Model & Warna</th>
+                            <th class="px-6 py-4">SA Name</th>
+                            <th class="px-6 py-4">Status Sekarang</th>
+                            <th class="px-6 py-4">Masuk / Estimasi</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="master-report-tbody"></tbody>
+                </table>
+            </div>
+
+            <div id="empty-report"
+                class="text-center py-12 bg-white rounded-2xl border border-slate-200 border-dashed hidden">
+                <div
+                    class="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="file-x" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-700">Belum Ada Data Laporan</h3>
+                <p class="text-slate-500 text-sm max-w-xs mx-auto mt-2">Data unit belum memiliki nama Service Advisor
+                    (SA).</p>
+            </div>
+        </div>
+
+        <!-- TAB: REPORT DETAIL -->
+        <div id="tab-report_detail" class="tab-content">
+            <div class="mb-8">
+                <button onclick="switchTab('report')"
+                    class="inline-flex items-center gap-2 text-slate-500 hover:text-indigo-600 font-bold text-sm transition mb-6">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Laporan
+                </button>
+                <div class="flex items-center gap-4 bg-white p-6 rounded-[32px] border border-slate-200 shadow-sm">
+                    <div class="w-14 h-14 bg-indigo-600 text-white rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-100">
+                        <i data-lucide="user" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Service Advisor</p>
+                        <h2 class="text-2xl font-black text-slate-800 leading-none" id="rd-sa-name">-</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-8">
+                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="bar-chart-2"
+                        class="w-4 h-4"></i> Sebaran Unit per Tahapan</h3>
+                <div class="flex gap-4 overflow-x-auto pb-4 custom-scrollbar" id="rd-distribution"></div>
+            </div>
+
+            <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i data-lucide="list" class="w-4 h-4"></i>
+                Daftar Unit</h3>
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600 min-w-[700px]">
+                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                        <tr>
+                            <th class="px-6 py-4">Nopol</th>
+                            <th class="px-6 py-4">Model & Warna</th>
+                            <th class="px-6 py-4">Status Sekarang</th>
+                            <th class="px-6 py-4">Masuk / Estimasi</th>
+                            <th class="px-6 py-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100" id="rd-unit-tbody">
+                        <!-- Data Unit SA go here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: NOTIFIKASI -->
+        <div id="tab-notifs" class="tab-content">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+                <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h3 class="font-bold text-slate-800">Riwayat Notifikasi Terbaru</h3>
+                        <p class="text-xs text-slate-400">Total: <span id="notif-total-count-header" class="font-bold text-indigo-600">0</span> | Menampilkan 50 data terakhir</p>
+                    </div>
+                    <button onclick="clearAllNotifications()" id="btn-clear-notifs"
+                        class="bg-red-50 text-red-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-red-600 hover:text-white transition flex items-center gap-2">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i> Hapus Semua Log
+                    </button>
+                </div>
+                <div class="overflow-x-auto max-h-[500px]">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[500px]">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4">Waktu</th>
+                                <th class="px-6 py-4">Pengirim</th>
+                                <th class="px-6 py-4">Pesan Notifikasi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" id="notif-tbody">
+                            <!-- Data Notif goes here -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="empty-notifs" class="text-center py-12 hidden">
+                    <p class="text-slate-400 italic text-sm">Tidak ada notifikasi di database.</p>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- TAB: APP SETTINGS -->
+        <div id="tab-settings" class="tab-content">
+            <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden mb-8">
+                <div class="p-8 border-b border-slate-100 bg-slate-50/30">
+                    <h3 class="text-xl font-black text-slate-800 flex items-center gap-3">
+                        <i data-lucide="settings-2" class="text-indigo-600"></i> Konfigurasi Aplikasi
+                    </h3>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Kelola preferensi sistem dan tampilan</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm min-w-[600px]">
+                        <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 tracking-wider">
+                            <tr>
+                                <th class="px-8 py-5 w-16">No.</th>
+                                <th class="px-6 py-5">Nama Pengaturan</th>
+                                <th class="px-6 py-5">Nilai Sekarang</th>
+                                <th class="px-8 py-5 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50" id="settings-tbody">
+                            <!-- Settings rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL EDIT SETTING -->
+        <div id="setting-edit-modal" class="fixed inset-0 bg-black/50 z-[70] hidden flex items-center justify-center backdrop-blur-sm p-4">
+            <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden modal-zoom">
+                <div class="bg-indigo-600 p-6 text-white relative">
+                    <button onclick="closeSettingModal()" class="absolute top-4 right-4 text-white/70 hover:text-white">
+                        <i data-lucide="x" class="w-6 h-6"></i>
+                    </button>
+                    <h2 class="text-xl font-black" id="setting-modal-title">Edit Pengaturan</h2>
+                </div>
+                <div class="p-8 space-y-5" id="setting-edit-content">
+                    <!-- Dynamic form based on setting type -->
+                </div>
+                <div class="p-8 bg-slate-50 border-t flex justify-end gap-3">
+                    <button onclick="closeSettingModal()" class="px-6 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold text-sm hover:bg-slate-100 transition">Batal</button>
+                    <button onclick="saveIndividualSetting()" id="btn-save-setting" class="px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB: PERMISSIONS -->
+        <div id="tab-permissions" class="tab-content">
+            <div class="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden mb-8">
+                <div class="p-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+                    <div>
+                        <h3 class="text-lg font-black text-slate-800">Master Izin Akses</h3>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Daftar role dan kemampuan sistem</p>
+                    </div>
+                    <button onclick="openAddRoleModal()" 
+                        class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition flex items-center gap-2">
+                        <i data-lucide="plus" class="w-4 h-4"></i> Tambah Role
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm min-w-[600px]">
+                        <thead class="bg-slate-50 text-[10px] uppercase font-black text-slate-400 tracking-wider">
+                            <tr>
+                                <th class="px-8 py-5 w-16">No.</th>
+                                <th class="px-6 py-5">Nama Role</th>
+                                <th class="px-6 py-5 text-center">Jumlah User</th>
+                                <th class="px-8 py-5 text-right">Izin Akses</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50" id="perm-tbody">
+                            <!-- Roles generated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-8 bg-slate-50/50 border-t border-slate-100 text-xs text-slate-400 leading-relaxed italic">
+                    * Perubahan izin akses akan langsung berdampak pada aplikasi mobile masing-masing role setelah mereka refresh halaman atau login ulang.
+                </div>
+            </div>
+        </div>
+
+
+
+    </main>
+
+    <!-- MODAL DETAIL UNIT -->
+    <div id="detail-modal"
+        class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden">
+            <div class="bg-indigo-600 p-6 text-white relative">
+                <button onclick="closeDetailModal()" class="absolute top-4 right-4 text-white/70 hover:text-white"><i
+                        data-lucide="x" class="w-6 h-6"></i></button>
+                <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Detail Unit</p>
+                <h2 id="m-plate" class="text-3xl font-black tracking-tight"></h2>
+                <p id="m-model" class="text-lg font-medium opacity-90"></p>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Status Sekarang</p>
+                        <span id="m-status"
+                            class="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-bold"></span>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Service Advisor</p>
+                        <p id="m-sa" class="font-bold text-slate-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Tanggal Masuk</p>
+                        <p id="m-in" class="font-bold text-slate-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1">Estimasi Selesai</p>
+                        <p id="m-est" class="font-bold text-indigo-600"></p>
+                    </div>
+                    <div class="col-span-2">
+                        <p class="text-xs font-bold text-slate-400 uppercase mb-1 text-[10px]">Update Terakhir</p>
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="clock" class="w-3.5 h-3.5 text-slate-400"></i>
+                            <p id="m-updated" class="font-bold text-slate-700 text-xs italic"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-2 flex justify-between text-xs font-bold text-slate-400 uppercase">
+                    <span>Mulai</span>
+                    <span>Selesai</span>
+                </div>
+                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                    <div id="m-progress" class="bg-indigo-600 h-full rounded-full transition-all duration-500"
+                        style="width: 0%"></div>
+                </div>
+                <div class="mt-6 text-center">
+                    <button onclick="closeDetailModal()"
+                        class="bg-slate-100 text-slate-600 px-6 py-2 rounded-xl font-bold text-sm hover:bg-slate-200 transition">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL AKSES ROLE -->
+    <div id="permissions-modal"
+        class="fixed inset-0 bg-black/40 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-[32px] w-full max-w-sm shadow-2xl overflow-hidden modal-zoom">
+            <div class="p-8">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center">
+                        <i data-lucide="shield-lock" class="w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800">Akses Role</h3>
+                        <p id="target-role-name" class="text-xs font-bold text-indigo-600 uppercase tracking-widest"></p>
+                    </div>
+                </div>
+
+                <div class="space-y-3 mb-8">
+                    <label class="perm-card flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-100 transition active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="plus-square" class="w-4 h-4 text-slate-400 transition-colors"></i>
+                            <span class="text-sm font-bold text-slate-700 transition-colors">Bisa Tambah Unit</span>
+                        </div>
+                        <input type="checkbox" id="perm-can_add" class="w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer">
+                    </label>
+
+                    <label class="perm-card flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-100 transition active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="edit-3" class="w-4 h-4 text-slate-400 transition-colors"></i>
+                            <span class="text-sm font-bold text-slate-700 transition-colors">Bisa Edit Data</span>
+                        </div>
+                        <input type="checkbox" id="perm-can_edit" class="w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer">
+                    </label>
+
+                    <label class="perm-card flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-100 transition active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="trash-2" class="w-4 h-4 text-slate-400 transition-colors"></i>
+                            <span class="text-sm font-bold text-slate-700 transition-colors">Bisa Hapus Unit</span>
+                        </div>
+                        <input type="checkbox" id="perm-can_delete" class="w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer">
+                    </label>
+
+                    <label class="perm-card flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-slate-100 transition active:scale-[0.98]">
+                        <div class="flex items-center gap-3">
+                            <i data-lucide="activity" class="w-4 h-4 text-slate-400 transition-colors"></i>
+                            <span class="text-sm font-bold text-slate-700 transition-colors">Update Status Progres</span>
+                        </div>
+                        <input type="checkbox" id="perm-can_status" class="w-5 h-5 rounded-lg border-slate-300 text-indigo-600 focus:ring-indigo-500 transition-all cursor-pointer">
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="closePermissionsModal()"
+                        class="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">Batal</button>
+                    <button onclick="savePermissions()" id="btn-save-perm"
+                        class="px-6 py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition">Simpan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM ALERT MODAL -->
+    <div id="custom-alert" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="info" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Informasi</h3>
+                <p id="alert-message" class="text-sm text-slate-500 mb-6"></p>
+                <button onclick="closeAlert()" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH/EDIT USER -->
+    <div id="user-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden modal-zoom">
+            <div class="bg-indigo-600 p-6 text-white relative">
+                <button onclick="closeUserModal()" class="absolute top-4 right-4 text-white/70 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                <div class="flex items-center gap-3 mb-1">
+                    <i data-lucide="user-cog" class="w-5 h-5"></i>
+                    <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider">Manajemen Akun</p>
+                </div>
+                <h2 id="user-modal-title" class="text-2xl font-black">Tambah User Baru</h2>
+            </div>
+            <form id="user-form" class="p-8 space-y-5">
+                <input type="hidden" id="user-id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Lengkap</label>
+                    <input type="text" id="u-fullname" required placeholder="Contoh: Budi Santoso"
+                        class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Username</label>
+                    <input type="text" id="u-username" required placeholder="user.byd"
+                        class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" id="u-password" required placeholder="••••••••"
+                            class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
+                        <button type="button" onclick="toggleUserPassword()" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <i data-lucide="eye" id="u-eye-icon" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Role Akses</label>
+                    <select id="u-role" required
+                        class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition cursor-pointer appearance-none">
+                        <option value="sa">Service Advisor (SA)</option>
+                        <option value="teknisi">Teknisi / Orang Bengkel</option>
+                        <option value="qc">Quality Control (QC)</option>
+                        <option value="admin_bp">Admin BP</option>
+                        <option value="admin">Super Admin</option>
+                        <option value="umum">Staff Umum</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 pt-4">
+                    <button type="button" onclick="closeUserModal()"
+                        class="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">Batal</button>
+                    <button type="submit" id="btn-save-user"
+                        class="px-6 py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition flex items-center justify-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i> Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CUSTOM CONFIRM MODAL -->
+    <div id="custom-confirm" class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-800 mb-2">Konfirmasi</h3>
+                <p id="confirm-message" class="text-sm text-slate-500 mb-6"></p>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="closeConfirm(false)" class="py-3 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition">Batal</button>
+                    <button onclick="closeConfirm(true)" class="py-3 bg-red-600 text-white rounded-xl font-bold shadow-lg hover:bg-red-700 transition">Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH ROLE -->
+    <div id="role-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden modal-zoom">
+            <div class="bg-indigo-600 p-6 text-white relative">
+                <button onclick="closeAddRoleModal()" class="absolute top-4 right-4 text-white/70 hover:text-white">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+                <div class="flex items-center gap-3 mb-1">
+                    <i data-lucide="shield-plus" class="w-5 h-5"></i>
+                    <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider">Akses Kontrol</p>
+                </div>
+                <h2 class="text-2xl font-black">Tambah Role Baru</h2>
+            </div>
+            <form id="role-form" class="p-8 space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">ID Role (Huruf Kecil, misal: staff_baru)</label>
+                    <input type="text" id="role-id-input" required placeholder="staff_baru"
+                        class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Nama Tampilan Role</label>
+                    <input type="text" id="role-name-input" required placeholder="Staff Khusus"
+                        class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-2xl outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition">
+                </div>
+                <div class="grid grid-cols-2 gap-4 pt-2">
+                    <button type="button" onclick="closeAddRoleModal()"
+                        class="px-6 py-4 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm hover:bg-slate-200 transition">Batal</button>
+                    <button type="submit"
+                        class="px-6 py-4 bg-indigo-600 text-white rounded-2xl font-bold text-sm shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition">Simpan Role</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- BOTTOM NAV MOBILE -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-3 flex justify-between items-center z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-safe-area-inset-bottom">
+        <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="flex flex-col items-center gap-1 text-indigo-600">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold">Home</span>
+        </button>
+        <button onclick="switchTab('users')" id="mobile-nav-users" class="flex flex-col items-center gap-1 text-slate-400">
+            <i data-lucide="users" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold">Data User</span>
+        </button>
+        <button onclick="switchTab('report')" id="mobile-nav-report" class="flex flex-col items-center gap-1 text-slate-400">
+            <i data-lucide="file-text" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold">UNIT SA</span>
+        </button>
+        <button onclick="toggleSidebar()" id="mobile-nav-settings" class="flex flex-col items-center gap-1 text-slate-400">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold">Setting</span>
+        </button>
+    </div>
+
+    <!-- MOBILE SA SETTING OVERLAY -->
+    <div id="sa-setting-mobile-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] hidden flex items-end" onclick="closeSASettingsMobile(event)">
+        <div class="bg-white w-full rounded-t-[2.5rem] p-6 pb-12 animate-slide-up" onclick="event.stopPropagation()">
+            <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+            <h3 class="font-bold text-slate-800 text-lg mb-6 text-center">Pengaturan Master SA</h3>
+            <div class="grid grid-cols-1 gap-4">
+                <button onclick="switchTab('permissions'); closeSASettingsMobile()" class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-indigo-50 hover:border-indigo-100 transition active:scale-95">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                        <i data-lucide="shield-check" class="w-6 h-6 text-indigo-600"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="font-bold text-slate-800">Izin Akses Role</p>
+                        <p class="text-xs text-slate-400">Atur hak akses setiap jabatan</p>
+                    </div>
+                </button>
+                <button onclick="closeSASettingsMobile()" class="w-full mt-4 py-4 text-slate-400 font-bold text-sm">Tutup Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed top-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none w-full max-w-[320px]"></div>
+
+    <script src="js/store.js?v=2.9.4"></script>
+    <script src="js/main.js?v=2.9.4"></script>
+    <script src="js/auth.js?v=2.9.4"></script>
+    <script src="js/admin.js?v=2.9.4"></script>
+</body>
+
+</html>
