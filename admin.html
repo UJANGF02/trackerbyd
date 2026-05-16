@@ -74,7 +74,7 @@
             inset: 0;
             background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(2px);
-            z-index: 40;
+            z-index: 45;
         }
 
         #aside-overlay.active {
@@ -97,8 +97,9 @@
             }
 
             main {
-                padding: 0.75rem !important;
+                padding: 0.5rem !important;
                 padding-bottom: 5rem !important;
+                width: 100%;
             }
 
             /* Hide desktop header on mobile */
@@ -109,15 +110,65 @@
             /* Adjust card grid for mobile */
             .grid-cols-2 {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.5rem;
             }
 
             .grid-cols-5 {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 0.5rem;
             }
 
-            /* Better table scroll */
+            /* Better table scroll - FULL WIDTH */
             .overflow-x-auto {
                 -webkit-overflow-scrolling: touch;
+                margin-left: -0.5rem;
+                margin-right: -0.5rem;
+                padding-left: 0;
+                padding-right: 0;
+                border-radius: 0;
+            }
+
+            /* Table full width on mobile */
+            table {
+                width: 100%;
+                min-width: 100%;
+                font-size: 0.8125rem;
+            }
+
+            /* Adjust table cells for mobile - WIDER */
+            th, td {
+                padding: 0.875rem 1.25rem !important;
+                font-size: 0.8125rem;
+                white-space: nowrap;
+            }
+
+            /* Card padding adjustment - SMALLER */
+            .bg-white.p-5, .bg-white.p-6, .bg-white.p-8 {
+                padding: 0.875rem !important;
+            }
+
+            /* Rounded corners for mobile */
+            .rounded-2xl {
+                border-radius: 0.75rem;
+            }
+
+            .rounded-\[32px\] {
+                border-radius: 1rem;
+            }
+
+            /* Ensure header stays above sidebar */
+            .lg\:hidden.sticky {
+                z-index: 60 !important;
+            }
+
+            /* Sidebar should be below header */
+            aside {
+                z-index: 50 !important;
+            }
+
+            /* Overlay should be between header and sidebar */
+            #aside-overlay {
+                z-index: 45 !important;
             }
         }
 
@@ -924,10 +975,10 @@
 
     <div id="toast-container" class="fixed top-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none w-full max-w-[320px]"></div>
 
-    <script src="js/store.js?v=2.9.4"></script>
-    <script src="js/main.js?v=2.9.4"></script>
-    <script src="js/auth.js?v=2.9.4"></script>
-    <script src="js/admin.js?v=2.9.4"></script>
+    <script src="js/store.js?v=2.9.6"></script>
+    <script src="js/main.js?v=2.9.6"></script>
+    <script src="js/auth.js?v=2.9.6"></script>
+    <script src="js/admin.js?v=2.9.6"></script>
 </body>
 
 </html>
