@@ -404,7 +404,7 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <h3 class="font-bold text-slate-800">Data Unit Kendaraan</h3>
                     <div class="relative w-full md:w-64 group">
@@ -413,26 +413,28 @@
                             class="w-full bg-slate-50 border border-slate-200 pl-11 pr-4 py-2.5 rounded-xl text-xs outline-none focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition">
                     </div>
                 </div>
-                <table class="w-full text-left text-sm text-slate-600 min-w-[600px]">
-                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
-                        <tr>
-                            <th class="px-6 py-4">Nopol</th>
-                            <th class="px-6 py-4">Model</th>
-                            <th class="px-6 py-4">Masuk</th>
-                            <th class="px-6 py-4">Status</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100" id="d-units-tbody">
-                        <!-- Data Unit goes here -->
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[600px]">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4">Nopol</th>
+                                <th class="px-6 py-4">Model</th>
+                                <th class="px-6 py-4">Masuk</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" id="d-units-tbody">
+                            <!-- Data Unit goes here -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         <!-- TAB: USERS -->
         <div id="tab-users" class="tab-content">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
                 <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h3 class="font-bold text-slate-800 text-lg">Daftar Pengguna</h3>
@@ -443,19 +445,21 @@
                         <i data-lucide="user-plus" class="w-4 h-4"></i> Tambah User Baru
                     </button>
                 </div>
-                <table class="w-full text-left text-sm text-slate-600 min-w-[500px]">
-                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
-                        <tr>
-                            <th class="px-6 py-4">Username</th>
-                            <th class="px-6 py-4">Nama Lengkap</th>
-                            <th class="px-6 py-4">Role</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100" id="u-users-tbody">
-                        <!-- Data Users goes here -->
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[500px]">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4">Username</th>
+                                <th class="px-6 py-4">Nama Lengkap</th>
+                                <th class="px-6 py-4">Role</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" id="u-users-tbody">
+                            <!-- Data Users goes here -->
+                        </tbody>
+                    </table>
+                </div>
                 <div class="p-6 text-xs text-slate-400 bg-slate-50 border-t border-slate-100">
                     *Izin akses role disimpan secara realtime di Cloud Firestore.
                 </div>
@@ -500,7 +504,7 @@
 
             <div id="sa-report-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
 
-            <div id="master-report-table-box" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto hidden">
+            <div id="master-report-table-box" class="bg-white rounded-2xl border border-slate-200 shadow-sm hidden">
                 <div class="p-6 border-b border-slate-100 bg-slate-50/50">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-600"></i> Sebaran Unit (Semua SA)</h3>
                 </div>
@@ -509,19 +513,21 @@
                 <div class="p-6 border-b border-slate-100 bg-slate-50/50 border-t">
                     <h3 class="font-bold text-slate-800 flex items-center gap-2"><i data-lucide="list" class="w-5 h-5 text-indigo-600"></i> Daftar Semua Unit</h3>
                 </div>
-                <table class="w-full text-left text-sm text-slate-600 min-w-[800px]">
-                    <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
-                        <tr>
-                            <th class="px-6 py-4">Nopol</th>
-                            <th class="px-6 py-4">Model & Warna</th>
-                            <th class="px-6 py-4">SA Name</th>
-                            <th class="px-6 py-4">Status Sekarang</th>
-                            <th class="px-6 py-4">Masuk / Estimasi</th>
-                            <th class="px-6 py-4 text-center">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100" id="master-report-tbody"></tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-600 min-w-[800px]">
+                        <thead class="bg-slate-50 text-xs uppercase font-bold text-slate-400">
+                            <tr>
+                                <th class="px-6 py-4">Nopol</th>
+                                <th class="px-6 py-4">Model & Warna</th>
+                                <th class="px-6 py-4">SA Name</th>
+                                <th class="px-6 py-4">Status Sekarang</th>
+                                <th class="px-6 py-4">Masuk / Estimasi</th>
+                                <th class="px-6 py-4 text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100" id="master-report-tbody"></tbody>
+                    </table>
+                </div>
             </div>
 
             <div id="empty-report"

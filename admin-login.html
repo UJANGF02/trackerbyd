@@ -128,7 +128,7 @@
         // Check if already logged in
         const session = Auth.getSession();
         if (session && (session.role === 'admin' || session.role === 'admin_bp')) {
-            window.location.href = 'admin.html#dashboard';
+            window.location.href = Auth._getRedirectPage('admin') + '#dashboard';
         }
 
         // Toggle Password
@@ -155,7 +155,7 @@
             const user = await Auth.login(username, password);
 
             if (user && (user.role === 'admin' || user.role === 'admin_bp')) {
-                window.location.href = 'admin.html#dashboard';
+                window.location.href = Auth._getRedirectPage('admin') + '#dashboard';
             } else if (user) {
                 // User logged in but NOT an admin
                 errorDiv.innerText = 'Akses Ditolak: Anda bukan Admin!';

@@ -12,14 +12,18 @@ const Auth = {
     },
 
     _getRedirectPage(target) {
-        const path = window.location.pathname;
-        if (path.endsWith('/admin/') || path.endsWith('/mobile/')) {
-            return `../${target}/`;
-        } else if (path.includes('/admin/index.html') || path.includes('/mobile/index.html')) {
-            return `../${target}/index.html`;
-        } else {
-            return `${target}.html`;
+        let path = window.location.pathname;
+        let base = path.substring(0, path.lastIndexOf('/'));
+        
+        const subdirs = ['/admin', '/mobile', '/admin-login', '/login-apps'];
+        for (const dir of subdirs) {
+            if (base.endsWith(dir)) {
+                base = base.substring(0, base.lastIndexOf('/'));
+                break;
+            }
         }
+        
+        return `${base}/${target}/`;
     },
 
     async loadUsers() {
