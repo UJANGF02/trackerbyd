@@ -11,6 +11,17 @@ const Auth = {
             : 'tracking_user_byd';
     },
 
+    _getRedirectPage(target) {
+        const path = window.location.pathname;
+        if (path.endsWith('/admin/') || path.endsWith('/mobile/')) {
+            return `../${target}/`;
+        } else if (path.includes('/admin/index.html') || path.includes('/mobile/index.html')) {
+            return `../${target}/index.html`;
+        } else {
+            return `${target}.html`;
+        }
+    },
+
     async loadUsers() {
         try {
             if (!window.fbDB) return [];
@@ -122,14 +133,14 @@ const Auth = {
         setTimeout(() => {
             // Cek jika sedang di halaman admin, arahkan ke admin-login
             const isAdminPage = window.location.pathname.includes('admin');
-            window.location.href = isAdminPage ? '../admin-login/' : '../login-apps/';
+            window.location.href = this._getRedirectPage(isAdminPage ? 'admin-login' : 'login-apps');
         }, 800);
     },
 
     requireAuth(allowedRoles) {
         const session = this.getSession();
         const isAdminPage = window.location.pathname.includes('admin');
-        const loginPage = isAdminPage ? '../admin-login/' : '../login-apps/';
+        const loginPage = this._getRedirectPage(isAdminPage ? 'admin-login' : 'login-apps');
 
         if (!session) {
             window.location.href = loginPage;
