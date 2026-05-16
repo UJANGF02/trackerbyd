@@ -12,18 +12,20 @@ const Auth = {
     },
 
     _getRedirectPage(target) {
-        let path = window.location.pathname;
-        let base = path.substring(0, path.lastIndexOf('/'));
+        const path = window.location.pathname;
+        const parts = path.split('/');
         
-        const subdirs = ['/admin', '/mobile', '/admin-login', '/login-apps'];
-        for (const dir of subdirs) {
-            if (base.endsWith(dir)) {
-                base = base.substring(0, base.lastIndexOf('/'));
+        let newParts = [];
+        for (const p of parts) {
+            // Berhenti jika menemukan folder khusus atau file .html
+            if (p === 'admin' || p === 'mobile' || p === 'admin-login' || p === 'login-apps' || p.includes('.html')) {
                 break;
             }
+            if (p) newParts.push(p);
         }
         
-        return `${base}/${target}/`;
+        const base = (newParts.length > 0) ? '/' + newParts.join('/') : '';
+        return base + '/' + target + '/';
     },
 
     async loadUsers() {
@@ -68,8 +70,8 @@ const Auth = {
             console.log("👥 Total users loaded from Firebase:", users.length);
 
             const userDoc = users.find(u => 
-                u.username && u.username.toLowerCase() === username.toLowerCase() && 
-                u.password && u.password.toLowerCase() === password.toLowerCase()
+                u.username && u.username.toLowerCase() === username.trim().toLowerCase() && 
+                u.password && u.password === password // Password harus case-sensitive
             );
             
             if (!userDoc) {
