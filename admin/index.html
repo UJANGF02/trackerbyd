@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
@@ -87,6 +89,7 @@
                 bottom: 0;
                 z-index: 50;
                 transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                width: 280px;
             }
 
             aside.active {
@@ -94,7 +97,27 @@
             }
 
             main {
-                padding: 1.5rem !important;
+                padding: 0.75rem !important;
+                padding-bottom: 5rem !important;
+            }
+
+            /* Hide desktop header on mobile */
+            .hidden-mobile {
+                display: none !important;
+            }
+
+            /* Adjust card grid for mobile */
+            .grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .grid-cols-5 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            /* Better table scroll */
+            .overflow-x-auto {
+                -webkit-overflow-scrolling: touch;
             }
         }
 
@@ -239,9 +262,8 @@
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
             <h2 class="text-sm font-black text-slate-800 uppercase tracking-tight" id="mobile-page-title">Dashboard</h2>
-                <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center" id="mobile-admin-initial">
-                    <i data-lucide="user" class="w-4 h-4"></i>
-                </div>
+            <div class="w-8 h-8 rounded-lg bg-indigo-600 text-white flex items-center justify-center" id="mobile-admin-initial">
+                <i data-lucide="user" class="w-4 h-4"></i>
             </div>
         </div>
 
@@ -299,10 +321,10 @@
                 </div>
             </div>
 
-            <!-- TRAFIK HARIAN -->
+            <!-- UNIT MASUK DAN KELUAR -->
             <div class="mb-8">
                 <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                    <i data-lucide="trending-up" class="w-4 h-4"></i> Trafik Harian Unit
+                    <i data-lucide="trending-up" class="w-4 h-4"></i> Unit Masuk dan Keluar
                 </h3>
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
@@ -861,22 +883,22 @@
         </div>
     </div>
     <!-- BOTTOM NAV MOBILE -->
-    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-3 flex justify-between items-center z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] pb-safe-area-inset-bottom">
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-3 flex justify-between items-center z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
         <button onclick="switchTab('dashboard')" id="mobile-nav-dashboard" class="flex flex-col items-center gap-1 text-indigo-600">
             <i data-lucide="home" class="w-6 h-6"></i>
-            <span class="text-[10px] font-bold">Home</span>
+            <span class="text-[10px] font-bold">Beranda</span>
         </button>
         <button onclick="switchTab('users')" id="mobile-nav-users" class="flex flex-col items-center gap-1 text-slate-400">
             <i data-lucide="users" class="w-6 h-6"></i>
-            <span class="text-[10px] font-bold">Data User</span>
+            <span class="text-[10px] font-bold">Pengguna</span>
         </button>
         <button onclick="switchTab('report')" id="mobile-nav-report" class="flex flex-col items-center gap-1 text-slate-400">
             <i data-lucide="file-text" class="w-6 h-6"></i>
-            <span class="text-[10px] font-bold">UNIT SA</span>
+            <span class="text-[10px] font-bold">Laporan</span>
         </button>
         <button onclick="toggleSidebar()" id="mobile-nav-settings" class="flex flex-col items-center gap-1 text-slate-400">
             <i data-lucide="menu" class="w-6 h-6"></i>
-            <span class="text-[10px] font-bold">Setting</span>
+            <span class="text-[10px] font-bold">Menu</span>
         </button>
     </div>
 
@@ -902,10 +924,10 @@
 
     <div id="toast-container" class="fixed top-6 right-6 z-[200] flex flex-col gap-3 pointer-events-none w-full max-w-[320px]"></div>
 
-    <script src="js/store.js?v=2.9.4"></script>
-    <script src="js/main.js?v=2.9.4"></script>
-    <script src="js/auth.js?v=2.9.4"></script>
-    <script src="js/admin.js?v=2.9.4"></script>
+    <script src="../js/store.js?v=2.9.5"></script>
+    <script src="../js/main.js?v=2.9.5"></script>
+    <script src="../js/auth.js?v=2.9.5"></script>
+    <script src="../js/admin.js?v=2.9.5"></script>
 </body>
 
 </html>
