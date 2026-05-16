@@ -137,14 +137,14 @@
 
             /* Adjust table cells for mobile - WIDER */
             th, td {
-                padding: 0.875rem 1.25rem !important;
-                font-size: 0.8125rem;
+                padding: 0.5rem !important;
+                font-size: 0.75rem !important;
                 white-space: nowrap;
             }
 
             /* Card padding adjustment - SMALLER */
-            .bg-white.p-5, .bg-white.p-6, .bg-white.p-8 {
-                padding: 0.875rem !important;
+            .bg-white.p-5, .bg-white.p-6, .bg-white.p-8, .p-8 {
+                padding: 0.5rem !important;
             }
 
             /* Rounded corners for mobile */
@@ -156,19 +156,24 @@
                 border-radius: 1rem;
             }
 
-            /* Ensure header stays above sidebar */
+            /* Ensure header stays below sidebar */
             .lg\:hidden.sticky {
                 z-index: 60 !important;
             }
 
-            /* Sidebar should be below header */
+            /* Sidebar should be above header */
             aside {
-                z-index: 50 !important;
+                z-index: 70 !important;
             }
 
             /* Overlay should be between header and sidebar */
             #aside-overlay {
-                z-index: 45 !important;
+                z-index: 65 !important;
+            }
+
+            /* Disable shadow globally on mobile as requested */
+            * {
+                box-shadow: none !important;
             }
         }
 
