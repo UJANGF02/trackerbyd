@@ -99,6 +99,7 @@
             main {
                 padding: 0.75rem !important;
                 padding-bottom: 5rem !important;
+                width: 100%;
             }
 
             /* Hide desktop header on mobile */
@@ -115,9 +116,35 @@
                 grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
-            /* Better table scroll */
+            /* Better table scroll - FULL WIDTH */
             .overflow-x-auto {
                 -webkit-overflow-scrolling: touch;
+                margin-left: -0.75rem;
+                margin-right: -0.75rem;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+
+            /* Table full width on mobile */
+            table {
+                width: 100%;
+                min-width: 100%;
+            }
+
+            /* Adjust table cells for mobile */
+            th, td {
+                padding: 0.75rem 1rem !important;
+                font-size: 0.875rem;
+            }
+
+            /* Card padding adjustment */
+            .bg-white {
+                padding: 1rem !important;
+            }
+
+            /* Rounded corners for mobile */
+            .rounded-2xl {
+                border-radius: 1rem;
             }
         }
 

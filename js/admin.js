@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     lucide.createIcons();
     if (!session) return;
 
+    // Auto-close sidebar on mobile on page load
+    if (window.innerWidth < 1024) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('aside-overlay');
+        if (sidebar) sidebar.classList.remove('active');
+        if (overlay) overlay.classList.remove('active');
+    }
+
     // Load Data
     await Store.init();
     

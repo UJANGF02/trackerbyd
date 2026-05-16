@@ -6,7 +6,7 @@ const Auth = {
     // Gunakan key berbeda untuk admin dan apps agar tidak saling logout
     get SESSION_KEY() {
         const path = window.location.pathname;
-        return (path.includes('admin.html') || path.includes('admin-login.html')) 
+        return (path.includes('admin') || path.includes('admin-login')) 
             ? 'tracking_admin_byd' 
             : 'tracking_user_byd';
     },
@@ -122,14 +122,14 @@ const Auth = {
         setTimeout(() => {
             // Cek jika sedang di halaman admin, arahkan ke admin-login
             const isAdminPage = window.location.pathname.includes('admin');
-            window.location.href = isAdminPage ? 'admin-login.html' : 'login-apps.html';
+            window.location.href = isAdminPage ? '../admin-login/' : '../login-apps/';
         }, 800);
     },
 
     requireAuth(allowedRoles) {
         const session = this.getSession();
-        const isAdminPage = window.location.pathname.includes('admin.html');
-        const loginPage = isAdminPage ? 'admin-login.html' : 'login-apps.html';
+        const isAdminPage = window.location.pathname.includes('admin');
+        const loginPage = isAdminPage ? '../admin-login/' : '../login-apps/';
 
         if (!session) {
             window.location.href = loginPage;
